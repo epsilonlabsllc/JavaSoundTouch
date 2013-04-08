@@ -32,17 +32,17 @@ public class FIFOProcessor extends FIFOSamplePipe {
 	}
 
 	@Override
-	float[] ptrBegin() {
+	SampleSet ptrBegin() {
 		return output.ptrBegin();
 	}
 
 	@Override
-	void putSamples(float[] samples) {
+	void putSamples(SampleSet samples) {
 		this.output.putSamples(samples);
 	}
 
 	@Override
-	int receiveSamples(float[] output) {
+	int receiveSamples(SampleSet output) {
 		return this.output.receiveSamples(output);
 	}
 

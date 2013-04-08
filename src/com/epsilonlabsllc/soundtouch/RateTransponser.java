@@ -31,9 +31,9 @@ public abstract class RateTransponser extends FIFOProcessor {
 
 	protected abstract void resetRegisters();
 
-	protected abstract int transposeStereo(float[] dest, final float[] src);
+	protected abstract int transposeStereo(SampleSet dest, final SampleSet src);
 
-	protected abstract int transposeMono(float[] dest, final float[] src);
+	protected abstract int transposeMono(SampleSet dest, final SampleSet src);
 
 	/**
 	 * Transposes the sample rate of the given samples using linear
@@ -44,7 +44,7 @@ public abstract class RateTransponser extends FIFOProcessor {
 	 * @param src
 	 * @return
 	 */
-	protected int transpose(float[] dest, final float[] src) {
+	protected int transpose(SampleSet dest, final SampleSet src) {
 		if (numChannels == 2) {
 			return transposeStereo(dest, src);
 		} else {
@@ -58,7 +58,7 @@ public abstract class RateTransponser extends FIFOProcessor {
 	 * 
 	 * @param src
 	 */
-	protected void downsample(float[] src) {
+	protected void downsample(SampleSet src) {
 		int count, sizeTemp;
 
 		// If the parameter 'uRate' value is larger than 'SCALE', first apply
@@ -89,7 +89,7 @@ public abstract class RateTransponser extends FIFOProcessor {
 
 		// Transpose the samples (+16 is to reserve some slack in the
 		// destination buffer)
-		sizeTemp = (int) ((float) src.length / fRate + 16.0f);
+		sizeTemp = (int) ((float) src.size() / fRate + 16.0f);
 		count = transpose(outputBuffer.ptrEnd(sizeTemp), tempBuffer.ptrBegin());
 		outputBuffer.putSamples(count);
 	}
@@ -100,7 +100,7 @@ public abstract class RateTransponser extends FIFOProcessor {
 	 * 
 	 * @param src
 	 */
-	protected void upsample(float[] src) {
+	protected void upsample(SampleSet src) {
 		int count, sizeTemp, num;
 
 		// If the parameter 'uRate' value is smaller than 'SCALE', first
@@ -109,7 +109,7 @@ public abstract class RateTransponser extends FIFOProcessor {
 
 		// First check that there's enough room in 'storeBuffer'
 		// (+16 is to reserve some slack in the destination buffer)
-		sizeTemp = (int) ((float) src.length / this.fRate + 16.0f);
+		sizeTemp = (int) ((float) src.size() / this.fRate + 16.0f);
 
 		// Transpose the samples, store the result into the end of "storeBuffer"
 		count = transpose(storeBuffer.ptrEnd(sizeTemp), src);
@@ -145,18 +145,18 @@ public abstract class RateTransponser extends FIFOProcessor {
 	 * @param samples
 	 *            samples to be processed?
 	 */
-	protected void processSamples(float[] samples) {
+	protected void processSamples(SampleSet samples) {
 		int count;
 		int sizeReq;
 
-		if (samples.length == 0)
+		if (samples.size() == 0)
 			return;
 		assert (pAAFilter != null) : "The pAAFilter cannot be null.";
 
 		// If anti-alias filter is turned off, simply transpose without applying
 		// the filter
 		if (bUseAAFilter == false) {
-			sizeReq = (int) ((float) samples.length / fRate + 1.0f);
+			sizeReq = (int) ((float) samples.size() / fRate + 1.0f);
 			count = transpose(outputBuffer.ptrEnd(sizeReq), samples);
 			outputBuffer.putSamples(count);
 			return;
@@ -285,7 +285,7 @@ public abstract class RateTransponser extends FIFOProcessor {
 	 *            the new samples
 	 */
 	@Override
-	public void putSamples(float[] samples) {
+	public void putSamples(SampleSet samples) {
 		processSamples(samples);
 	}
 

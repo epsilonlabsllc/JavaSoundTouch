@@ -11,7 +11,7 @@ public class AAFilter {
 		
 	}
 
-	public int evaluate(float[] ptrEnd, float[] ptrBegin, int num,
+	public int evaluate(SampleSet ptrEnd, SampleSet ptrBegin, int num,
 			int numChannels) {
 		// TODO Auto-generated method stub
 		return 0;
