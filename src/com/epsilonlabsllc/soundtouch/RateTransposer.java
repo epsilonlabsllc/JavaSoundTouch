@@ -1,3 +1,4 @@
+package com.epsilonlabsllc.soundtouch;
 ////////////////////////////////////////////////////////////////////////////////
 /// 
 /// Sample rate transposer. Changes sample rate by using linear interpolation 
