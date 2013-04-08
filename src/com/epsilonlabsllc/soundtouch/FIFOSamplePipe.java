@@ -1,5 +1,6 @@
 package com.epsilonlabsllc.soundtouch;
 
+/** Abstract base class for FIFO (first-in-first-out) sample processing classes. */
 public abstract class FIFOSamplePipe {
 	/**
 	 * Returns a pointer to the beginning of the output samples. This function
@@ -12,7 +13,7 @@ public abstract class FIFOSamplePipe {
 	 * 
 	 * @return the output sample array
 	 */
-	abstract Sample[] ptrBegin();
+	abstract float[] ptrBegin();
 
 	/**
 	 * Adds 'numSamples' pcs of samples from the 'samples' memory position to
@@ -20,7 +21,7 @@ public abstract class FIFOSamplePipe {
 	 * 
 	 * @param samples
 	 */
-	abstract void putSamples(Sample[] samples);
+	abstract void putSamples(float[] samples);
 
 	/**
 	 * Moves samples from the 'other' pipe instance to this instance.
@@ -43,7 +44,7 @@ public abstract class FIFOSamplePipe {
 	 *            Buffer where to copy output samples.
 	 * @return Number of samples returned.
 	 */
-	abstract int receiveSamples(Sample[] output);
+	abstract int receiveSamples(float[] output);
 
 	/**
 	 * Adjusts book-keeping so that given number of samples are removed from
