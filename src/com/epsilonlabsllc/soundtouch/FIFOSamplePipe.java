@@ -28,7 +28,10 @@ public abstract class FIFOSamplePipe {
 	 * @param other
 	 *            Other pipe instance where from the receive the data.
 	 */
-	abstract void moveSamples(FIFOSamplePipe other);
+	void moveSamples(FIFOSamplePipe other) {
+		putSamples(other.ptrBegin());
+		other.receiveSamples(other.numSamples());
+	}
 
 	/**
 	 * Output samples from beginning of the sample buffer. Copies requested
