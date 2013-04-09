@@ -1,14 +1,15 @@
 package com.epsilonlabsllc.soundtouch;
 
 public class SampleSet {
-	private float[] samples;
+	private int[] samples;
 	private int size;
 	
-	public SampleSet(float[] samples) {
+	public SampleSet(int[] samples) {
 		this.samples = samples;
+		this.size = samples.length;
 	}
 	
-	public void setSamples(float[] samples) {
+	public void setSamples(int[] samples) {
 		this.samples = samples;
 	}
 	
@@ -16,7 +17,7 @@ public class SampleSet {
 		this.size = size;
 	}
 	
-	public float[] samples() {
+	public int[] samples() {
 		return this.samples;
 	}
 	

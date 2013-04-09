@@ -27,7 +27,7 @@ public class RateTransposerInteger extends RateTransponser {
 	@Override
 	protected int transposeMono(SampleSet dest, SampleSet src) {
 		int i, used;
-		double temp, vol1; // these are large samples
+		long temp, vol1; // these are large samples
 
 		if (src.size() == 0)
 			return 0; // no samples, no work
@@ -39,7 +39,7 @@ public class RateTransposerInteger extends RateTransponser {
 		while (iSlopeCount <= SCALE) {
 			vol1 = SCALE - iSlopeCount;
 			temp = vol1 * sPrevSampleL + iSlopeCount * src.samples()[0];
-			dest.samples()[i] = (float) (temp / SCALE);
+			dest.samples()[i] = (int) (temp / SCALE);
 			i++;
 			iSlopeCount += iRate;
 		}
@@ -58,7 +58,7 @@ public class RateTransposerInteger extends RateTransponser {
 			}
 			vol1 = SCALE - iSlopeCount;
 			temp = src.samples()[used] * vol1 + iSlopeCount * src.samples()[used + 1];
-			dest.samples()[i] = (float) (temp / SCALE);
+			dest.samples()[i] = (int) (temp / SCALE);
 
 			i++;
 			iSlopeCount += iRate;
@@ -85,9 +85,9 @@ public class RateTransposerInteger extends RateTransponser {
 		while (iSlopeCount <= SCALE) {
 			vol1 = (SCALE - iSlopeCount);
 			temp = vol1 * sPrevSampleL + iSlopeCount * src.samples()[0];
-			dest.samples()[2 * i] = (float) (temp / SCALE);
+			dest.samples()[2 * i] = (int) (temp / SCALE);
 			temp = vol1 * sPrevSampleR + iSlopeCount * src.samples()[1];
-			dest.samples()[2 * i + 1] = (float) (temp / SCALE);
+			dest.samples()[2 * i + 1] = (int) (temp / SCALE);
 			i++;
 			iSlopeCount += iRate;
 		}
@@ -107,9 +107,9 @@ public class RateTransposerInteger extends RateTransponser {
 			srcPos = 2 * used;
 			vol1 = (SCALE - iSlopeCount);
 			temp = src.samples()[srcPos] * vol1 + iSlopeCount * src.samples()[srcPos + 2];
-			dest.samples()[2 * i] = (float) (temp / SCALE);
+			dest.samples()[2 * i] = (int) (temp / SCALE);
 			temp = src.samples()[srcPos + 1] * vol1 + iSlopeCount * src.samples()[srcPos + 3];
-			dest.samples()[2 * i + 1] = (float) (temp / SCALE);
+			dest.samples()[2 * i + 1] = (int) (temp / SCALE);
 
 			i++;
 			iSlopeCount += iRate;
