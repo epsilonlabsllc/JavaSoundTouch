@@ -35,4 +35,28 @@ public class Util {
 	public static final double checkLimits(double x, double mi, double ma) {
 		return (((x) < (mi)) ? (mi) : (((x) > (ma)) ? (ma) : (x)));
 	}
+	
+	public static int toUnsignedInt(int intToBeUnsigned) {
+		// FIXME
+		return intToBeUnsigned;
+	}
+	
+	public static SampleVector alignPointer(SampleVector samples) {
+		// TODO find out if this necessary
+		return samples;
+	}
+
+	public static void memmove(SampleVector dest, SampleVector src, int num) {
+		// TODO figure out difference between memmove and memcpy
+		assert (dest != null);
+		assert (src != null);
+		assert (num >= 0);
+		
+		assert (src.size() >= num);
+		assert (dest.size() >= src.size());
+		
+		for (int i = 0; i < num; i++) {
+			dest.set(i, src.get(i));
+		}
+	}
 }
