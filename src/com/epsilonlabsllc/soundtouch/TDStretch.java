@@ -46,8 +46,8 @@ public class TDStretch extends FIFOProcessor {
 	protected int sampleReq;
 	protected float tempo;
 
-	protected SampleSet pMidBuffer;
-	protected SampleSet pMidBufferUnaligned;
+	protected SampleVector pMidBuffer;
+	protected SampleVector pMidBufferUnaligned;
 	protected int overlapLength;
 	protected int seekLength;
 	protected int seekWindowLength;
@@ -112,7 +112,7 @@ public class TDStretch extends FIFOProcessor {
 		overlapLength = newOverlapLength;
 
 		if (overlapLength > prevOvl) {
-			pMidBufferUnaligned = new SampleSet(overlapLength * 2 + 16 / SAMPLE_TYPE_SIZE);
+			pMidBufferUnaligned = new SampleVector(overlapLength * 2 + 16 / SAMPLE_TYPE_SIZE);
 			// ensure that 'pMidBuffer' is aligned to 16 byte boundary for
 			// efficiency
 			// pMidBuffer = (SAMPLETYPE
@@ -160,7 +160,7 @@ public class TDStretch extends FIFOProcessor {
 		slopingDivider = (newOvl * newOvl - 1) / 3;
 	}
 
-	protected double calcCrossCorr(final SampleSet mixingPos, final SampleSet compare) {
+	protected double calcCrossCorr(final SampleVector mixingPos, final SampleVector compare) {
 		long corr;
 		long norm;
 		int i;
@@ -170,10 +170,19 @@ public class TDStretch extends FIFOProcessor {
 		// efficiency and gives slightly better resolution against rounding.
 		// For mono it same routine, just unrolls loop by factor of 4
 		for (i = 0; i < channels * overlapLength; i += 4) {
-			corr += (mixingPos.samples()[i] * compare.samples()[i] + mixingPos.samples()[i + 1] * compare.samples()[i + 1] + mixingPos.samples()[i + 2]
-					* compare.samples()[i + 2] + mixingPos.samples()[i + 3] * compare.samples()[i + 3]) >> overlapDividerBits;
-			norm += (mixingPos.samples()[i] * mixingPos.samples()[i] + mixingPos.samples()[i + 1] * mixingPos.samples()[i + 1] + mixingPos.samples()[i + 2]
-					* mixingPos.samples()[i + 2] + mixingPos.samples()[i + 3] * mixingPos.samples()[i + 3]) >> overlapDividerBits;
+			corr += (mixingPos.get(i) * compare.get(i) + // &nbsp;
+					mixingPos.get(i + 1) * compare.get(i + 1) + // &nbsp;
+					mixingPos.get(i + 2) * compare.get(i + 2) + // &nbsp;
+			mixingPos.get(i + 3) * compare.get(i + 3)); // &nbsp;
+			
+			corr >>= overlapDividerBits;
+		
+			norm += (mixingPos.get(i) * mixingPos.get(i) + // &nbsp;
+					mixingPos.get(i + 1) * mixingPos.get(i + 1) + // &nbsp;
+					mixingPos.get(i + 2) * mixingPos.get(i + 2) + // &nbsp;
+			mixingPos.get(i + 3) * mixingPos.get(i + 3)); // &nbsp;
+			
+			norm >>= overlapDividerBits;
 		}
 
 		// Normalize result by dividing by sqrt(norm) - this step is easiest
@@ -191,7 +200,7 @@ public class TDStretch extends FIFOProcessor {
 	// sample sequences are 'most alike', in terms of the highest
 	// cross-correlation
 	// value over the overlapping period
-	protected int seekBestOverlapPositionFull(final SampleSet refPos) {
+	protected int seekBestOverlapPositionFull(final SampleVector refPos) {
 		int bestOffs;
 		double bestCorr, corr;
 		int i;
@@ -233,7 +242,7 @@ public class TDStretch extends FIFOProcessor {
 	// sample sequences are 'most alike', in terms of the highest
 	// cross-correlation
 	// value over the overlapping period
-	protected int seekBestOverlapPositionQuick(final SampleSet refPos) {
+	protected int seekBestOverlapPositionQuick(final SampleVector refPos) {
 		int j;
 		int bestOffs;
 		double bestCorr, corr;
@@ -285,7 +294,7 @@ public class TDStretch extends FIFOProcessor {
 	}
 
 	// Seeks for the optimal overlap-mixing position.
-	protected int seekBestOverlapPosition(final SampleSet refPos) {
+	protected int seekBestOverlapPosition(final SampleVector refPos) {
 		if (bQuickSeek) {
 			return seekBestOverlapPositionQuick(refPos);
 		} else {
@@ -295,7 +304,7 @@ public class TDStretch extends FIFOProcessor {
 
 	// Overlaps samples in 'midBuffer' with the samples in 'input'. The 'Stereo'
 	// version of the routine.
-	protected void overlapStereo(SampleSet poutput, final SampleSet input) {
+	protected void overlapStereo(SampleVector poutput, final SampleVector input) {
 		int i;
 		short temp;
 		int cnt2;
@@ -303,8 +312,8 @@ public class TDStretch extends FIFOProcessor {
 		for (i = 0; i < overlapLength; i++) {
 			temp = (short) (overlapLength - i);
 			cnt2 = 2 * i;
-			poutput.samples()[cnt2] = (input.samples()[cnt2] * i + pMidBuffer.samples()[cnt2] * temp) / overlapLength;
-			poutput.samples()[cnt2 + 1] = (input.samples()[cnt2 + 1] * i + pMidBuffer.samples()[cnt2 + 1] * temp) / overlapLength;
+			poutput.set(cnt2, (input.get(cnt2) * i + pMidBuffer.get(cnt2) * temp) / overlapLength);
+			poutput.set(cnt2 + 1, (input.get(cnt2 + 1) * i + pMidBuffer.get(cnt2 + 1) * temp) / overlapLength);
 		}
 	}
 
@@ -313,7 +322,7 @@ public class TDStretch extends FIFOProcessor {
 		return (int) (Math.log(value) / Math.log(2.0) + 0.5);
 	}
 
-	protected void overlapMono(SampleSet pOutput, final SampleSet pInput) {
+	protected void overlapMono(SampleVector pOutput, final SampleVector pInput) {
 		int i;
 		int m1, m2;
 
@@ -321,7 +330,7 @@ public class TDStretch extends FIFOProcessor {
 		m2 = (int) overlapLength;
 
 		for (i = 0; i < overlapLength; i++) {
-			pOutput.samples()[i] = (pInput.samples()[i] * m1 + pMidBuffer.samples()[i] * m2) / overlapLength;
+			pOutput.set(i, ((pInput.get(i) * m1 + pMidBuffer.get(i) * m2) / overlapLength));
 			m1 += 1;
 			m2 -= 1;
 		}
@@ -333,7 +342,7 @@ public class TDStretch extends FIFOProcessor {
 
 	// Overlaps samples in 'midBuffer' with the samples in 'pInputBuffer' at
 	// position of 'ovlPos'.
-	protected final void overlap(SampleSet pOutput, final SampleSet pInput, int ovlPos) {
+	protected final void overlap(SampleVector pOutput, final SampleVector pInput, int ovlPos) {
 		if (channels == 2) {
 			// stereo sound
 			overlapStereo(pOutput, pInput.shift(2 * ovlPos));
@@ -408,7 +417,7 @@ public class TDStretch extends FIFOProcessor {
 				continue; // just in case, shouldn't really happen
 			}
 
-			outputBuffer.putSamples(inputBuffer.ptrBegin().shift(channels * (offset + overlapLength)).setSize(temp));
+			outputBuffer.putSamples(inputBuffer.ptrBegin().shift(channels * (offset + overlapLength)).size(temp));
 
 			// Copies the end of the current sequence from 'inputBuffer' to
 			// 'midBuffer' for being mixed with the beginning of the next
@@ -572,7 +581,7 @@ public class TDStretch extends FIFOProcessor {
 	// / Adds 'numsamples' pcs of samples from the 'samples' memory position
 	// into
 	// / the input of the object.
-	public void putSamples(SampleSet samples) {
+	public void putSamples(SampleVector samples) {
 		// Add the samples into the input buffer
 		inputBuffer.putSamples(samples);
 		// Process the samples in input buffer

@@ -18,7 +18,7 @@ public class AAFilter {
 		double fc2, wc;
 		double scaleCoeff, sum;
 		double[] work;
-		SampleSet coeffs;
+		SampleVector coeffs;
 
 		assert (length >= 2);
 		assert (length % 4 == 0);
@@ -26,7 +26,7 @@ public class AAFilter {
 		assert (cutoffFreq <= 0.5);
 
 		work = new double[length];
-		coeffs = new SampleSet(length);
+		coeffs = new SampleVector(length);
 
 		fc2 = 2.0 * cutoffFreq;
 		wc = PI * fc2;
@@ -69,7 +69,7 @@ public class AAFilter {
 			temp += (temp >= 0) ? 0.5 : -0.5;
 			// ensure no overfloods
 			assert (temp >= -32768 && temp <= 32767);
-			coeffs.samples()[i] = (int) temp;
+			coeffs.set(i, (int) temp);
 		}
 
 		// Set coefficients. Use divide factor 14 => divide result by 2^14 =
@@ -95,7 +95,7 @@ public class AAFilter {
 		calculateCoeffs();
 	}
 
-	public int evaluate(SampleSet dest, SampleSet src, int numChannels) {
+	public int evaluate(SampleVector dest, SampleVector src, int numChannels) {
 		return pFIR.evaluate(dest, src, numChannels);
 	}
 

@@ -3,19 +3,19 @@ package com.epsilonlabsllc.soundtouch;
 public class FIFOSampleBuffer extends FIFOSamplePipe {
 
 	@Override
-	SampleSet ptrBegin() {
+	SampleVector ptrBegin() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	void putSamples(SampleSet samples) {
+	void putSamples(SampleVector samples) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	int receiveSamples(SampleSet output) {
+	int receiveSamples(SampleVector output) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -50,7 +50,7 @@ public class FIFOSampleBuffer extends FIFOSamplePipe {
 		return 0;
 	}
 
-	public SampleSet ptrEnd(int sizeTemp) {
+	public SampleVector ptrEnd(int sizeTemp) {
 		// TODO Auto-generated method stub
 		return null;
 	}

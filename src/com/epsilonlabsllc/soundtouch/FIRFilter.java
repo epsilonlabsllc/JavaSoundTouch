@@ -10,9 +10,9 @@ public abstract class FIRFilter {
 	// Result divider value.
 	protected int resultDivider;
 	// Memory for filter coefficients
-	protected SampleSet filterCoeffs;
+	protected SampleVector filterCoeffs;
 
-	protected int evaluateFilterStereo(SampleSet dest, final SampleSet src) {
+	protected int evaluateFilterStereo(SampleVector dest, final SampleVector src) {
 		int i, j, end;
 		long suml, sumr;
 
@@ -29,10 +29,14 @@ public abstract class FIRFilter {
 
 			for (i = 0; i < length; i += 4) {
 				// loop is unrolled by factor of 4 here for efficiency
-				suml += src.samples()[2 * i + 0 + j] * filterCoeffs.samples()[i + 0] + src.samples()[2 * i + 2 + j] * filterCoeffs.samples()[i + 1]
-						+ src.samples()[2 * i + 4 + j] * filterCoeffs.samples()[i + 2] + src.samples()[2 * i + 6 + j] * filterCoeffs.samples()[i + 3];
-				sumr += src.samples()[2 * i + 1 + j] * filterCoeffs.samples()[i + 0] + src.samples()[2 * i + 3 + j] * filterCoeffs.samples()[i + 1]
-						+ src.samples()[2 * i + 5 + j] * filterCoeffs.samples()[i + 2] + src.samples()[2 * i + 7 + j] * filterCoeffs.samples()[i + 3];
+				suml += src.get(2 * i + 0 + j) * filterCoeffs.get(i + 0) + // &nbsp
+						src.get(2 * i + 2 + j) * filterCoeffs.get(i + 1) + // &nbsp
+						src.get(2 * i + 4 + j) * filterCoeffs.get(i + 2) + // &nbsp
+						src.get(2 * i + 6 + j) * filterCoeffs.get(i + 3);
+				sumr += src.get(2 * i + 1 + j) * filterCoeffs.get(i + 0) + // &nbsp
+						src.get(2 * i + 3 + j) * filterCoeffs.get(i + 1) + // &nbsp
+						src.get(2 * i + 5 + j) * filterCoeffs.get(i + 2) + // &nbsp
+						src.get(2 * i + 7 + j) * filterCoeffs.get(i + 3);
 			}
 
 			suml >>= resultDivFactor;
@@ -41,8 +45,8 @@ public abstract class FIRFilter {
 			suml = (suml < -32768) ? -32768 : (suml > 32767) ? 32767 : suml;
 			// saturate to 16 bit integer limits
 			sumr = (sumr < -32768) ? -32768 : (sumr > 32767) ? 32767 : sumr;
-			dest.samples()[j] = (int) suml;
-			dest.samples()[j + 1] = (int) sumr;
+			dest.set(j, (int) suml);
+			dest.set(j + 1, (int) sumr);
 		}
 		return src.size() - length;
 	}
@@ -54,7 +58,7 @@ public abstract class FIRFilter {
 	 * @param src
 	 * @return
 	 */
-	protected int evaluateFilterMono(SampleSet dest, final SampleSet src) {
+	protected int evaluateFilterMono(SampleVector dest, final SampleVector src) {
 		int i, j, offset, end;
 		long sum;
 
@@ -66,13 +70,15 @@ public abstract class FIRFilter {
 			sum = 0;
 			for (i = 0; i < length; i += 4) {
 				// loop is unrolled by factor of 4 here for efficiency
-				sum += src.samples()[i + 0 + offset] * filterCoeffs.samples()[i + 0] + src.samples()[i + 1 + offset] * filterCoeffs.samples()[i + 1]
-						+ src.samples()[i + 2 + offset] * filterCoeffs.samples()[i + 2] + src.samples()[i + 3 + offset] * filterCoeffs.samples()[i + 3];
+				sum += src.get(i + 0 + offset) * filterCoeffs.get(i + 0) + // &nbsp
+						src.get(i + 1 + offset) * filterCoeffs.get(i + 1) + // &nbsp
+						src.get(i + 2 + offset) * filterCoeffs.get(i + 2) + // &nbsp
+						src.get(i + 3 + offset) * filterCoeffs.get(i + 3);
 			}
 			sum >>= resultDivFactor;
 			// saturate to 16 bit integer limits
 			sum = (sum < -32768) ? -32768 : (sum > 32767) ? 32767 : sum;
-			dest.samples()[j] = (int) sum;
+			dest.set(j, (int) sum);
 			offset++;
 		}
 
@@ -91,7 +97,7 @@ public abstract class FIRFilter {
 	 * @param numChannels
 	 * @return
 	 */
-	public abstract int evaluate(SampleSet dest, final SampleSet src, int numChannels);
+	public abstract int evaluate(SampleVector dest, final SampleVector src, int numChannels);
 
 	/**
 	 * Set filter coefficients and length. Throws an exception if filter length isn't divisible by 8
@@ -100,7 +106,7 @@ public abstract class FIRFilter {
 	 * @param newLength
 	 * @param uResultDivFactor
 	 */
-	protected void setCoefficients(SampleSet coeffs, int newLength, int uResultDivFactor) {
+	protected void setCoefficients(SampleVector coeffs, int newLength, int uResultDivFactor) {
 		assert (newLength > 0);
 		if (newLength % 8 != 0)
 			throw new RuntimeException("FIR filter length not divisible by 8");
@@ -112,7 +118,7 @@ public abstract class FIRFilter {
 		resultDivFactor = uResultDivFactor;
 		resultDivider = (int) Math.pow(2.0, (int) resultDivFactor);
 
-		filterCoeffs = new SampleSet(length);
+		filterCoeffs = new SampleVector(length);
 		Util.memcpy(filterCoeffs, coeffs, length);
 	}
 	

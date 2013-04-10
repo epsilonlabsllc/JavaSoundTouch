@@ -31,9 +31,9 @@ public abstract class RateTransposer extends FIFOProcessor {
 
 	protected abstract void resetRegisters();
 
-	protected abstract int transposeStereo(SampleSet dest, final SampleSet src);
+	protected abstract int transposeStereo(SampleVector dest, final SampleVector src);
 
-	protected abstract int transposeMono(SampleSet dest, final SampleSet src);
+	protected abstract int transposeMono(SampleVector dest, final SampleVector src);
 
 	/**
 	 * Transposes the sample rate of the given samples using linear
@@ -44,7 +44,7 @@ public abstract class RateTransposer extends FIFOProcessor {
 	 * @param src
 	 * @return
 	 */
-	protected int transpose(SampleSet dest, final SampleSet src) {
+	protected int transpose(SampleVector dest, final SampleVector src) {
 		if (numChannels == 2) {
 			return transposeStereo(dest, src);
 		} else {
@@ -58,7 +58,7 @@ public abstract class RateTransposer extends FIFOProcessor {
 	 * 
 	 * @param src
 	 */
-	protected void downsample(SampleSet src) {
+	protected void downsample(SampleVector src) {
 		int count, sizeTemp;
 
 		// If the parameter 'uRate' value is larger than 'SCALE', first apply
@@ -100,7 +100,7 @@ public abstract class RateTransposer extends FIFOProcessor {
 	 * 
 	 * @param src
 	 */
-	protected void upsample(SampleSet src) {
+	protected void upsample(SampleVector src) {
 		int count, sizeTemp, num;
 
 		// If the parameter 'uRate' value is smaller than 'SCALE', first
@@ -145,7 +145,7 @@ public abstract class RateTransposer extends FIFOProcessor {
 	 * @param samples
 	 *            samples to be processed?
 	 */
-	protected void processSamples(SampleSet samples) {
+	protected void processSamples(SampleVector samples) {
 		int count;
 		int sizeReq;
 
@@ -280,7 +280,7 @@ public abstract class RateTransposer extends FIFOProcessor {
 	 *            the new samples
 	 */
 	@Override
-	public void putSamples(SampleSet samples) {
+	public void putSamples(SampleVector samples) {
 		processSamples(samples);
 	}
 

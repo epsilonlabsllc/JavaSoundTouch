@@ -1,7 +1,7 @@
 package com.epsilonlabsllc.soundtouch;
 
 public class Util {
-	public static <T> void memcpy(SampleSet dest, SampleSet src, int num) {
+	public static <T> void memcpy(SampleVector dest, SampleVector src, int num) {
 		assert (dest != null);
 		assert (src != null);
 		assert (num >= 0);
@@ -10,13 +10,13 @@ public class Util {
 		assert (dest.size() >= src.size());
 		
 		for (int i = 0; i < num; i++) {
-			dest.samples()[i] = src.samples()[i];
+			dest.set(i, src.get(i));
 		}
 	}
 	
-	public static void memset(SampleSet ptr, int value, int num) {
+	public static void memset(SampleVector ptr, int value, int num) {
 		for (int i = 0; i < num; i++) {
-			ptr.samples()[i] = value;
+			ptr.set(i, value);
 		}
 	}
 	

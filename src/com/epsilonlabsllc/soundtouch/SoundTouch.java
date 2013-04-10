@@ -171,7 +171,7 @@ public class SoundTouch extends FIFOProcessor {
 		pTDStretch.setSampleRate(srate);
 	}
 	
-	void putSamples(SampleSet samples) {
+	void putSamples(SampleVector samples) {
 		// Adds 'numSamples' pcs of samples from the 'samples' memory position into
 		// the input of the object.
 		if (this.bSrateSet == false) {
@@ -214,7 +214,7 @@ public class SoundTouch extends FIFOProcessor {
 	    int i;
 	    int nUnprocessed;
 	    int nOut;
-	    SampleSet buff = new SampleSet(64*2);   // note: allocate 2*64 to cater 64 sample frames of stereo sound
+	    SampleVector buff = new SampleVector(64*2);   // note: allocate 2*64 to cater 64 sample frames of stereo sound
 
 	    // check how many samples still await processing, and scale
 	    // that by tempo & rate to get expected output sample count
@@ -231,7 +231,7 @@ public class SoundTouch extends FIFOProcessor {
 	    // 8ksamples in any case)
 	    for (i = 0; i < 128; i ++) 
 	    {
-	        putSamples(buff.setSize(64));
+	        putSamples(buff.size(64));
 	        if ((int)numSamples() >= nOut) 
 	        {
 	            // Enough new samples have appeared into the output!

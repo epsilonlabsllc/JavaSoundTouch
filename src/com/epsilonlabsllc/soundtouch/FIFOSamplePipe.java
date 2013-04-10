@@ -13,7 +13,7 @@ public abstract class FIFOSamplePipe {
 	 * 
 	 * @return the output sample array
 	 */
-	abstract SampleSet ptrBegin();
+	abstract SampleVector ptrBegin();
 
 	/**
 	 * Adds 'numSamples' pcs of samples from the 'samples' memory position to
@@ -21,7 +21,7 @@ public abstract class FIFOSamplePipe {
 	 * 
 	 * @param samples
 	 */
-	abstract void putSamples(SampleSet sampleSet);
+	abstract void putSamples(SampleVector sampleSet);
 
 	/**
 	 * Moves samples from the 'other' pipe instance to this instance.
@@ -44,7 +44,7 @@ public abstract class FIFOSamplePipe {
 	 *            Buffer where to copy output samples.
 	 * @return Number of samples returned.
 	 */
-	abstract int receiveSamples(SampleSet output);
+	abstract int receiveSamples(SampleVector output);
 
 	/**
 	 * Adjusts book-keeping so that given number of samples are removed from
