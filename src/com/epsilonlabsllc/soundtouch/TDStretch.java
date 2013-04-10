@@ -91,6 +91,18 @@ public class TDStretch extends FIFOProcessor {
 		return new TDStretch();
 	}
 
+	public void setSampleRate(int aSampleRate) {
+		// accept only positive parameter values - if zero or negative, use old
+		// values instead
+		if (aSampleRate > 0) {
+			this.sampleRate = aSampleRate;
+			calcSeqParameters();
+			calculateOverlapLength(overlapMs);
+			// set tempo to recalculate 'sampleReq'
+			setTempo(tempo);
+		}
+	}
+
 	// Set new overlap length parameter & reallocate RefMidBuffer if necessary.
 	protected void acceptNewOverlapLength(int newOverlapLength) {
 		int prevOvl;

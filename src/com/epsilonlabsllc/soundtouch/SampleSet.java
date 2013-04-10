@@ -2,7 +2,7 @@ package com.epsilonlabsllc.soundtouch;
 
 public class SampleSet {
 	private final int[] samples;
-	private int size;
+	private final int size;
 	
 	public SampleSet(int size) {
 		this.samples = new int[size];
@@ -24,8 +24,7 @@ public class SampleSet {
 	}
 	
 	public SampleSet setSize(int size) {
-		this.size = size;
-		return this;
+		return new SampleSet(this.samples, size);
 	}
 	
 	public int[] samples() {

@@ -20,6 +20,10 @@ public class Util {
 		}
 	}
 	
+	public static boolean testFloatEqual(double a, double b) {
+		return Math.abs(a - b) < 1e-10;
+	}
+	
 	public static final int max(int x, int y) {
 		return ((x) > (y)) ? (x) : (y);
 	}
