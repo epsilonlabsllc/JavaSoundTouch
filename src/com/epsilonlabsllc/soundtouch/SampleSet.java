@@ -1,20 +1,30 @@
 package com.epsilonlabsllc.soundtouch;
 
 public class SampleSet {
-	private int[] samples;
-	private int size;
+	private final int[] samples;
+	private final int size;
+	
+	public SampleSet(int size) {
+		this.samples = new int[size];
+		this.size = size;
+	}
 	
 	public SampleSet(int[] samples) {
 		this.samples = samples;
 		this.size = samples.length;
 	}
 	
-	public void setSamples(int[] samples) {
+	public SampleSet(int[] samples, int size) {
 		this.samples = samples;
+		this.size = size;
 	}
 	
-	public void setSize(int size) {
-		this.size = size;
+	public SampleSet setSamples(int[] samples) {
+		return new SampleSet(samples);
+	}
+	
+	public SampleSet setSize(int size) {
+		return new SampleSet(size);
 	}
 	
 	public int[] samples() {
@@ -23,5 +33,21 @@ public class SampleSet {
 	
 	public int size() {
 		return this.size;
+	}
+	
+	/**
+	 * The equivalent of advancing a pointer e.g.<pre>
+	 * <code>int *ptr;
+	 * int *newPtr = ptr + 5;</code></pre>
+	 * @param shiftDistance
+	 * @return
+	 */
+	public SampleSet shift(int shiftDistance) {
+		int[] newSamples = new int[samples.length - size];
+		for (int i = 0; i < newSamples.length; i++) {
+			newSamples[i] = samples[i + shiftDistance];
+		}
+		
+		return new SampleSet(newSamples);
 	}
 }

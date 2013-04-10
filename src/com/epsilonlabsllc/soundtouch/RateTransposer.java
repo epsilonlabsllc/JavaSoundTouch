@@ -1,6 +1,6 @@
 package com.epsilonlabsllc.soundtouch;
 
-public abstract class RateTransponser extends FIFOProcessor {
+public abstract class RateTransposer extends FIFOProcessor {
 	protected AAFilter pAAFilter;
 
 	protected float fRate;
@@ -79,7 +79,7 @@ public abstract class RateTransponser extends FIFOProcessor {
 		sizeTemp = storeBuffer.numSamples();
 
 		count = pAAFilter.evaluate(tempBuffer.ptrEnd(sizeTemp),
-				storeBuffer.ptrBegin(), sizeTemp, (int) numChannels);
+				storeBuffer.ptrBegin(), (int) numChannels);
 
 		if (count == 0)
 			return;
@@ -119,14 +119,14 @@ public abstract class RateTransponser extends FIFOProcessor {
 		// result to "dest"
 		num = storeBuffer.numSamples();
 		count = pAAFilter.evaluate(outputBuffer.ptrEnd(num),
-				storeBuffer.ptrBegin(), num, (int) this.numChannels);
+				storeBuffer.ptrBegin(), (int) this.numChannels);
 		outputBuffer.putSamples(count);
 
 		// Remove the processed samples from "storeBuffer"
 		storeBuffer.receiveSamples(count);
 	}
 
-	public RateTransponser() {
+	public RateTransposer() {
 		this.numChannels = 2; // Default to stereo
 		this.bUseAAFilter = true;
 		this.fRate = 0.0f;
@@ -177,14 +177,9 @@ public abstract class RateTransponser extends FIFOProcessor {
 	 * 
 	 * @return a new <code>RateTransponser</code>
 	 */
-	public static RateTransponser newInstance() {
-		if (SoundTouchSettings.SOUNDTOUCH_INTEGER_SAMPLES) {
-			// return new RateTransposerInteger();
-			return new RateTransposerInteger();
-		} else {
-			// return new RateTransposerFloat();
-		}
-		return null;
+	public static RateTransposer newInstance() {
+		// Currently the only implementation
+		return new RateTransposerInteger();
 	}
 
 	/**

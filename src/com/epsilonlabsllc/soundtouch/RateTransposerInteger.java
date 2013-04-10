@@ -2,7 +2,7 @@ package com.epsilonlabsllc.soundtouch;
 
 /// A linear samplerate transposer class that uses integer arithmetics.
 /// for the transposing.
-public class RateTransposerInteger extends RateTransponser {
+public class RateTransposerInteger extends RateTransposer {
 	// / fixed-point interpolation routine precision
 	private static final int SCALE = 65536;
 	private int iSlopeCount;
