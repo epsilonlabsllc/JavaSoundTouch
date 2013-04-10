@@ -2,7 +2,7 @@ package com.epsilonlabsllc.soundtouch;
 
 public class SoundTouch extends FIFOProcessor {
 	public static final int SAMPLE_TYPE_SIZE = 4;
-	
+
 	private RateTransposer pRateTransposer;
 	private TDStretch pTDStretch;
 
@@ -170,38 +170,38 @@ public class SoundTouch extends FIFOProcessor {
 		// set sample rate, leave other tempo changer parameters as they are.
 		pTDStretch.setSampleRate(srate);
 	}
-	
+
 	void putSamples(SampleVector samples) {
-		// Adds 'numSamples' pcs of samples from the 'samples' memory position into
+		// Adds 'numSamples' pcs of samples from the 'samples' memory position
+		// into
 		// the input of the object.
 		if (this.bSrateSet == false) {
 			throw new RuntimeException("SoundTouch : Sample rate not defined");
 		} else if (channels == 0) {
 			throw new RuntimeException("SoundTouch : Number of channels not defined");
 		}
-		
+
 		if (SoundTouchSettings.SOUNDTOUCH_PREVENT_CLICK_AT_RATE_CROSSOVER) {
-			if (rate <= 1.0f) 
-		    {
-		        // transpose the rate down, output the transposed sound to tempo changer buffer
-		        assert(output == pTDStretch);
-		        pRateTransposer.putSamples(samples);
-		        pTDStretch.moveSamples(pRateTransposer);
-		    } 
-		    else {
-		        // evaluate the tempo changer, then transpose the rate up, 
-		        assert(output == pRateTransposer);
-		        pTDStretch.putSamples(samples);
-		        pRateTransposer.moveSamples(pTDStretch);
-		    }
+			if (rate <= 1.0f) {
+				// transpose the rate down, output the transposed sound to tempo
+				// changer buffer
+				assert (output == pTDStretch);
+				pRateTransposer.putSamples(samples);
+				pTDStretch.moveSamples(pRateTransposer);
+			} else {
+				// evaluate the tempo changer, then transpose the rate up,
+				assert (output == pRateTransposer);
+				pTDStretch.putSamples(samples);
+				pRateTransposer.moveSamples(pTDStretch);
+			}
 		} else {
-			// evaluate the tempo changer, then transpose the rate up, 
-	        assert(output == pRateTransposer);
-	        pTDStretch.putSamples(samples);
-	        pRateTransposer.moveSamples(pTDStretch);
+			// evaluate the tempo changer, then transpose the rate up,
+			assert (output == pRateTransposer);
+			pTDStretch.putSamples(samples);
+			pRateTransposer.moveSamples(pTDStretch);
 		}
 	}
-	
+
 	// Flushes the last samples from the processing pipeline to the output.
 	// Clears also the internal processing buffers.
 	//
@@ -209,50 +209,58 @@ public class SoundTouch extends FIFOProcessor {
 	// stream. This function may introduce additional blank samples in the end
 	// of the sound stream, and thus it's not recommended to call this function
 	// in the middle of a sound stream.
-	void flush()
-	{
-	    int i;
-	    int nUnprocessed;
-	    int nOut;
-	    SampleVector buff = new SampleVector(64*2);   // note: allocate 2*64 to cater 64 sample frames of stereo sound
+	void flush() {
+		int i;
+		int nUnprocessed;
+		int nOut;
+		SampleVector buff = new SampleVector(64 * 2); // note: allocate 2*64 to
+														// cater 64 sample
+														// frames of stereo
+														// sound
 
-	    // check how many samples still await processing, and scale
-	    // that by tempo & rate to get expected output sample count
-	    nUnprocessed = numUnprocessedSamples();
-	    nUnprocessed = (int)((double)nUnprocessed / (tempo * rate) + 0.5);
+		// check how many samples still await processing, and scale
+		// that by tempo & rate to get expected output sample count
+		nUnprocessed = numUnprocessedSamples();
+		nUnprocessed = (int) ((double) nUnprocessed / (tempo * rate) + 0.5);
 
-	    nOut = numSamples();        // ready samples currently in buffer ...
-	    nOut += nUnprocessed;       // ... and how many we expect there to be in the end
-	    
-	    Util.memset(buff, 0, 64 * channels);
-	    // "Push" the last active samples out from the processing pipeline by
-	    // feeding blank samples into the processing pipeline until new, 
-	    // processed samples appear in the output (not however, more than 
-	    // 8ksamples in any case)
-	    for (i = 0; i < 128; i ++) 
-	    {
-	        putSamples(buff.size(64));
-	        if ((int)numSamples() >= nOut) 
-	        {
-	            // Enough new samples have appeared into the output!
-	            // As samples come from processing with bigger chunks, now truncate it
-	            // back to maximum "nOut" samples to improve duration accuracy 
-	            adjustAmountOfSamples(nOut);
+		nOut = numSamples(); // ready samples currently in buffer ...
+		nOut += nUnprocessed; // ... and how many we expect there to be in the
+								// end
 
-	            // finish
-	            break;  
-	        }
-	    }
+		Util.memset(buff, 0, 64 * channels);
+		// "Push" the last active samples out from the processing pipeline by
+		// feeding blank samples into the processing pipeline until new,
+		// processed samples appear in the output (not however, more than
+		// 8ksamples in any case)
+		for (i = 0; i < 128; i++) {
+			putSamples(buff.size(64));
+			if ((int) numSamples() >= nOut) {
+				// Enough new samples have appeared into the output!
+				// As samples come from processing with bigger chunks, now
+				// truncate it
+				// back to maximum "nOut" samples to improve duration accuracy
+				adjustAmountOfSamples(nOut);
 
-	    // Clear working buffers
-	    pRateTransposer.clear();
-	    pTDStretch.clearInput();
-	    // yet leave the 'tempoChanger' output intouched as that's where the
-	    // flushed samples are!
+				// finish
+				break;
+			}
+		}
+
+		// Clear working buffers
+		pRateTransposer.clear();
+		pTDStretch.clearInput();
+		// yet leave the 'tempoChanger' output intouched as that's where the
+		// flushed samples are!
 	}
 
 	private int numUnprocessedSamples() {
-		// TODO Auto-generated method stub
+		FIFOSamplePipe psp;
+		if (pTDStretch != null) {
+			psp = pTDStretch.getInput();
+			if (psp != null) {
+				return psp.numSamples();
+			}
+		}
 		return 0;
 	}
 }
