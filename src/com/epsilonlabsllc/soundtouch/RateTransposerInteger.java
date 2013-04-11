@@ -18,12 +18,18 @@ public class RateTransposerInteger extends RateTransposer {
 		setRate(1.0f);
 	}
 
+	/**
+	 * sets iSlopeCount, sPrevSampleL and sPrevSampleR to 0
+	 */
 	public void resetRegisters() {
 		iSlopeCount = 0;
 		sPrevSampleL = 0;
 		sPrevSampleR = 0;
 	}
 
+	/**
+	 * transposes a mono SampleVetor from src to dest
+	 */
 	@Override
 	protected int transposeMono(SampleVector dest, SampleVector src) {
 		int i, used;
@@ -70,6 +76,9 @@ public class RateTransposerInteger extends RateTransposer {
 		return i;
 	}
 
+	/**
+	 * transposes a stereo SampleVector from src to dest
+	 */
 	@Override
 	protected int transposeStereo(SampleVector dest, SampleVector src) {
 		int srcPos, i, used;

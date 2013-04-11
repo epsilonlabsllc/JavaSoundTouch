@@ -24,9 +24,16 @@ public class FIFOProcessor extends FIFOSamplePipe {
         this.output = output;
 	}
 	
+	/**
+	 * Empty Constructor
+	 */
 	public FIFOProcessor() {
 	}
 	
+	/**
+	 * Constructor
+	 * @param output sets output to the given FIFOSamplePipe
+	 */
 	public FIFOProcessor(FIFOSamplePipe output) {
 		this.output = output;
 	}

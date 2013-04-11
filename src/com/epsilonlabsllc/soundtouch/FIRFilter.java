@@ -12,6 +12,7 @@ public abstract class FIRFilter {
 	// Memory for filter coefficients
 	protected SampleVector filterCoeffs;
 
+	//???? TODO:
 	protected int evaluateFilterStereo(SampleVector dest, final SampleVector src) {
 		int i, j, end;
 		long suml, sumr;

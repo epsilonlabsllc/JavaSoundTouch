@@ -9,9 +9,22 @@ public class AAFilter {
 	// Low-pass filter cut-off frequency, negative = invalid
 	protected double cutoffFreq;
 
-	// / num of filter taps
+	// num of filter taps
 	protected int length;
+	
+	/**
+	 * Constructor
+	 * @param len number of filter taps
+	 */
+	public AAFilter(int len) {
+		pFIR = FIRFilter.newInstance();
+		cutoffFreq = 0.5;
+		setLength(len);
+	}
 
+	/**
+	 * Calculates a SampleVector of coefficients for pFIR and sets them in pFIR
+	 */
 	protected void calculateCoeffs() {
 		int i;
 		double cntTemp, temp, tempCoeff, h, w;
@@ -77,12 +90,6 @@ public class AAFilter {
 		pFIR.setCoefficients(coeffs, length, 14);
 	}
 
-	public AAFilter(int len) {
-		pFIR = FIRFilter.newInstance();
-		cutoffFreq = 0.5;
-		setLength(len);
-	}
-
 	/**
 	 * Sets new anti-alias filter cut-off edge frequency, scaled to sampling
 	 * frequency (nyquist frequency = 0.5). The filter will cut off the
@@ -95,6 +102,13 @@ public class AAFilter {
 		calculateCoeffs();
 	}
 
+	/**
+	 * Passes arguements and call to pFIR.evaluate()
+	 * @param dest
+	 * @param src
+	 * @param numChannels
+	 * @return
+	 */
 	public int evaluate(SampleVector dest, SampleVector src, int numChannels) {
 		return pFIR.evaluate(dest, src, numChannels);
 	}

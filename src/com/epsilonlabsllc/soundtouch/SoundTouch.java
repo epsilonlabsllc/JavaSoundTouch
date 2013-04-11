@@ -35,6 +35,9 @@ public class SoundTouch extends FIFOProcessor {
 	// and 'virtualPitch'
 	protected float tempo;
 
+	/**
+	 * Constructor
+	 */
 	public SoundTouch() {
 		pRateTransposer = RateTransposer.newInstance();
 		pTDStretch = TDStretch.newInstance();
@@ -52,6 +55,10 @@ public class SoundTouch extends FIFOProcessor {
 		bSrateSet = false;
 	}
 
+	/**
+	 * calculates the new rate and tempo, based on new rate and tempo parameters, for transformation purposes.
+	 * Adjusts rate and tempo accordingly
+	 */
 	private void calcEffectiveRateAndTempo() {
 		float oldTempo = tempo;
 		float oldRate = rate;
@@ -253,6 +260,10 @@ public class SoundTouch extends FIFOProcessor {
 		// flushed samples are!
 	}
 
+	/**
+	 * returns the number of unprocessed samples
+	 * @return
+	 */
 	private int numUnprocessedSamples() {
 		FIFOSamplePipe psp;
 		if (pTDStretch != null) {

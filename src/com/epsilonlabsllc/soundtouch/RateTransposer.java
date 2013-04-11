@@ -28,6 +28,16 @@ public abstract class RateTransposer extends FIFOProcessor {
 	protected int iSlopeCount;
 	protected int iRate;
 	protected float sPrevSampleL, sPrevSampleR;
+	
+	public RateTransposer() {
+		this.numChannels = 2; // Default to stereo
+		this.bUseAAFilter = true;
+		this.fRate = 0.0f;
+
+		// Instantiates the anti-alias filter with default tap length
+		// of 32
+		pAAFilter = new AAFilter(32);
+	}
 
 	protected abstract void resetRegisters();
 
@@ -124,16 +134,6 @@ public abstract class RateTransposer extends FIFOProcessor {
 
 		// Remove the processed samples from "storeBuffer"
 		storeBuffer.receiveSamples(count);
-	}
-
-	public RateTransposer() {
-		this.numChannels = 2; // Default to stereo
-		this.bUseAAFilter = true;
-		this.fRate = 0.0f;
-
-		// Instantiates the anti-alias filter with default tap length
-		// of 32
-		pAAFilter = new AAFilter(32);
 	}
 
 	/**

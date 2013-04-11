@@ -21,13 +21,15 @@ public class FIFOSampleBuffer extends FIFOSamplePipe {
 	// / Channels, 1=mono, 2=stereo.
 	private int channels;
 
-	// / Current position pointer to the buffer. This pointer is increased when
-	// samples are
-	// / removed from the pipe so that it's necessary to actually rewind buffer
-	// (move data)
-	// / only new data when is put to the pipe.
+	// Current position pointer to the buffer. This pointer is increased when samples are
+	// removed from the pipe so that it's necessary to actually rewind buffer (move data)
+	// only when new data is put to the pipe.
 	private int bufferPos;
 
+	/**
+	 * Constructor
+	 * @param numChannels number of channels (1 for mono, 2 for stereo)
+	 */
 	public FIFOSampleBuffer(int numChannels) {
 		assert (numChannels > 0);
 		sizeInBytes = 0; // reasonable initial value
@@ -39,15 +41,21 @@ public class FIFOSampleBuffer extends FIFOSamplePipe {
 		ensureCapacity(32); // allocate initial capacity
 	}
 
-	// Returns the current buffer capacity in terms of samples
+	/**
+	 * Returns the current buffer capacity in terms of samples
+	 * @return
+	 */
 	final int getCapacity() {
 		return sizeInBytes / (channels * SAMPLE_TYPE_SIZE);
 	}
 
-	// Ensures that the buffer has enought capacity, i.e. space for _at least_
-	// 'capacityRequirement' number of samples. The buffer is grown in steps of
-	// 4 kilobytes to eliminate the need for frequently growing up the buffer,
-	// as well as to round the buffer size up to the virtual memory page size.
+
+	/**
+	 * Ensures that the buffer has enough capacity, i.e. space for _at least_ 'capacityRequirement' number of samples. 
+	 * The buffer is grown in steps of 4 kilobytes to eliminate the need for frequently growing up the buffer,
+	 * as well as to round the buffer size up to the virtual memory page size.
+	 * @param capacityRequirement
+	 */
 	private void ensureCapacity(int capacityRequirement) {
 		SampleVector tempUnaligned, temp;
 
@@ -71,14 +79,12 @@ public class FIFOSampleBuffer extends FIFOSamplePipe {
 		}
 	}
 
-	// Returns a pointer to the beginning of the currently non-outputted
-	// samples.
-	// This function is provided for accessing the output samples directly.
-	// Please be careful!
-	//
-	// When using this function to output samples, also remember to 'remove' the
-	// outputted samples from the buffer by calling the
-	// 'receiveSamples(numSamples)' function
+	/**
+	 * Returns a pointer to the beginning of the currently non-outputted samples.
+	 * This function is provided for accessing the output samples directly. Please be careful!
+	 * When using this function to output samples, also remember to 'remove' the outputted samples
+	 * from the buffer by calling the 'receiveSamples(numSamples)' function
+	 */
 	@Override
 	SampleVector ptrBegin() {
 		assert (buffer != null);
